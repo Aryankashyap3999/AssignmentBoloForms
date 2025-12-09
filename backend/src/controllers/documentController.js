@@ -13,7 +13,7 @@ export const uploadDocument = async (req, res) => {
       return res.status(400).json({ error: 'Invalid email format' });
     }
 
-    const pdfBuffer = Buffer.from(''); // Placeholder - implement actual PDF buffer reading
+    const pdfBuffer = Buffer.from(''); 
 
     const document = await documentService.createDocument(
       { fileName, pdfUrl, pdfWidth, pdfHeight, createdBy, recipientEmail, status: 'draft' },
