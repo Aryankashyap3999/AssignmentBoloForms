@@ -3,21 +3,16 @@ import { isValidEmail } from '../utils/validationUtils.js';
 
 export const uploadDocument = async (req, res) => {
   try {
-    const { fileName, pdfUrl, pdfWidth, pdfHeight, createdBy, recipientEmail } = req.body;
-
-    if (!fileName || !pdfUrl || !pdfWidth || !pdfHeight || !createdBy) {
-      return res.status(400).json({ error: 'Missing required fields' });
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    if (recipientEmail && !isValidEmail(recipientEmail)) {
-      return res.status(400).json({ error: 'Invalid email format' });
-    }
-
-    const pdfBuffer = Buffer.from(''); 
+    const { originalname, buffer } = req.file;
+    const createdBy = req.body.email || 'anonymous';
 
     const document = await documentService.createDocument(
-      { fileName, pdfUrl, pdfWidth, pdfHeight, createdBy, recipientEmail, status: 'draft' },
-      pdfBuffer
+      { fileName: originalname, createdBy, status: 'draft' },
+      buffer
     );
 
     res.status(201).json({ success: true, data: document });
