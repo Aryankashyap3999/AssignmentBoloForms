@@ -4,15 +4,15 @@ const signedDocumentSchema = new mongoose.Schema(
   {
     originalDocumentId: mongoose.Schema.Types.ObjectId,
     signedPdfUrl: String,
-    originalHash: String,         // SHA-256 hash before signing
-    signedHash: String,           // SHA-256 hash after signing
+    originalHash: String,        
+    signedHash: String,          
     signerEmail: String,
     signerIpAddress: String,
     signerDeviceInfo: String,
     
     auditLog: [
       {
-        action: String,           // 'field_filled', 'document_signed'
+        action: String,          
         timestamp: Date,
         details: String
       }
