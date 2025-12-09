@@ -4,9 +4,9 @@ const documentSchema = new mongoose.Schema(
   {
     fileName: String,
     pdfUrl: String,
-    originalHash: String,        // SHA-256 hash of original PDF
-    pdfWidth: Number,             // in points (72 DPI)
-    pdfHeight: Number,            // in points (72 DPI)
+    originalHash: String,      
+    pdfWidth: Number,            
+    pdfHeight: Number,           
     status: {
       type: String,
       enum: ['draft', 'signed'],

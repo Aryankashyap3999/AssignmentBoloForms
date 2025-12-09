@@ -10,13 +10,11 @@ const fieldSchema = new mongoose.Schema(
     },
     fieldLabel: String,
     
-    // Browser coordinates (CSS pixels, top-left origin)
     browserX: Number,
     browserY: Number,
     browserWidth: Number,
     browserHeight: Number,
     
-    // PDF coordinates (Points, bottom-left origin)
     pdfX: Number,
     pdfY: Number,
     pdfWidth: Number,
@@ -27,8 +25,7 @@ const fieldSchema = new mongoose.Schema(
       default: 1
     },
     
-    // Content after signing
-    content: String,  // Can store base64 for signature, text value, etc.
+    content: String,  
     isSigned: {
       type: Boolean,
       default: false
