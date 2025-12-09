@@ -1,7 +1,22 @@
 import signedDocumentRepository from '../repositories/signedDocumentRepository.js';
+import { hashBuffer } from '../utils/hashUtils.js';
+import { getCurrentDate, getTimeDifference } from '../utils/commonUtils.js';
 
-export const createSignedDocument = async (signedDocumentData) => {
-  const signedDocument = await signedDocumentRepository.create(signedDocumentData);
+export const createSignedDocument = async (signedDocumentData, signedPdfBuffer) => {
+  const signedHash = hashBuffer(signedPdfBuffer);
+  
+  const signedDocument = await signedDocumentRepository.create({
+    ...signedDocumentData,
+    signedHash,
+    auditLog: [
+      {
+        action: 'document_signed',
+        timestamp: getCurrentDate(),
+        details: `Document signed by ${signedDocumentData.signerEmail}`
+      }
+    ]
+  });
+  
   return signedDocument;
 };
 
@@ -42,7 +57,20 @@ export const getSignedDocumentsByStatus = async (status) => {
 
 export const addAuditLogEntry = async (id, auditEntry) => {
   const signedDocument = await signedDocumentRepository.getById(id);
-  signedDocument.auditLog.push(auditEntry);
+  signedDocument.auditLog.push({
+    ...auditEntry,
+    timestamp: getCurrentDate()
+  });
   const updated = await signedDocumentRepository.updateById(id, { auditLog: signedDocument.auditLog });
   return updated;
+};
+
+export const getSigningDuration = async (id) => {
+  const signedDocument = await signedDocumentRepository.getById(id);
+  if (signedDocument.auditLog && signedDocument.auditLog.length > 0) {
+    const startLog = signedDocument.auditLog[0];
+    const endLog = signedDocument.auditLog[signedDocument.auditLog.length - 1];
+    return getTimeDifference(startLog.timestamp, endLog.timestamp);
+  }
+  return 0;
 };

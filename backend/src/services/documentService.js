@@ -1,7 +1,14 @@
 import documentRepository from '../repositories/documentRepository.js';
+import { hashBuffer } from '../utils/hashUtils.js';
 
-export const createDocument = async (documentData) => {
-  const document = await documentRepository.create(documentData);
+export const createDocument = async (documentData, pdfBuffer) => {
+  const pdfHash = hashBuffer(pdfBuffer);
+  
+  const document = await documentRepository.create({
+    ...documentData,
+    originalHash: pdfHash
+  });
+  
   return document;
 };
 
@@ -43,4 +50,17 @@ export const getDocumentsByRecipient = async (recipientEmail) => {
 export const updateDocumentStatus = async (id, status) => {
   const document = await documentRepository.updateById(id, { status });
   return document;
+};
+
+export const getDocumentWithHash = async (id) => {
+  const document = await documentRepository.getById(id);
+  return {
+    id: document._id,
+    fileName: document.fileName,
+    pdfUrl: document.pdfUrl,
+    originalHash: document.originalHash,
+    pdfWidth: document.pdfWidth,
+    pdfHeight: document.pdfHeight,
+    status: document.status
+  };
 };
