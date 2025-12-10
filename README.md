@@ -2,7 +2,7 @@
 
 A full-stack application for uploading PDFs, adding signature fields, and generating digitally signed documents with complete audit trails.
 
-## 🚀 Live Deployment
+## Live Deployment
 
 **Frontend:** https://assignment-bolo-forms-jxex.vercel.app/
 
