@@ -2,15 +2,22 @@ import documentRepository from '../repositories/documentRepository.js';
 import { hashBuffer } from '../utils/hashUtils.js';
 
 export const createDocument = async (documentData, pdfBuffer) => {
-  const pdfHash = hashBuffer(pdfBuffer);
-  
-  const document = await documentRepository.create({
-    ...documentData,
-    originalHash: pdfHash,
-    pdfBuffer: pdfBuffer
-  });
-  
-  return document;
+  try {
+    console.log('[SERVICE] Creating document with buffer size:', pdfBuffer.length);
+    const pdfHash = hashBuffer(pdfBuffer);
+    
+    const document = await documentRepository.create({
+      ...documentData,
+      originalHash: pdfHash,
+      pdfBuffer: pdfBuffer
+    });
+    
+    console.log('[SERVICE] Document saved to DB:', document._id);
+    return document;
+  } catch (error) {
+    console.error('[SERVICE] Error creating document:', error.message);
+    throw error;
+  }
 };
 
 export const getAllDocuments = async () => {

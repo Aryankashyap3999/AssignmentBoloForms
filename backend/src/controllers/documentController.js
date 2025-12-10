@@ -3,6 +3,8 @@ import { isValidEmail } from '../utils/validationUtils.js';
 
 export const uploadDocument = async (req, res) => {
   try {
+    console.log('[UPLOAD] Request received, file:', req.file ? 'yes' : 'no');
+    
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
     }
@@ -10,13 +12,17 @@ export const uploadDocument = async (req, res) => {
     const { originalname, buffer } = req.file;
     const createdBy = req.body.email || 'anonymous';
 
+    console.log('[UPLOAD] File:', originalname, 'Size:', buffer.length, 'bytes');
+
     const document = await documentService.createDocument(
       { fileName: originalname, createdBy, status: 'draft' },
       buffer
     );
 
+    console.log('[UPLOAD] Document created:', document._id);
     res.status(201).json({ success: true, data: document });
   } catch (error) {
+    console.error('[UPLOAD] Error:', error.message);
     res.status(500).json({ error: error.message });
   }
 };

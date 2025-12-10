@@ -1,10 +1,10 @@
 import { FieldBox } from '../atoms/FieldBox';
 import './SignatureField.css';
 
-export const SignatureField = ({ field, isSelected, onSelect, onDragStart, onResize }) => {
+export const SignatureField = ({ field, isSelected, onSelect, onDragMove, onResize }) => {
   return (
-    <FieldBox field={field} isSelected={isSelected} onSelect={onSelect} onDragStart={onDragStart} onResize={onResize}>
-      <div className="signature-field">
+    <FieldBox field={field} isSelected={isSelected} onSelect={onSelect} onDragMove={onDragMove} onResize={onResize}>
+      <div className="signature-field" style={{ pointerEvents: 'none' }}>
         <span className="field-label">Signature</span>
         {field.image ? (
           <img src={field.image} alt="signature" className="signature-image" />

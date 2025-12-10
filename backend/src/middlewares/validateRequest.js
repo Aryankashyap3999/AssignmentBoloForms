@@ -1,5 +1,5 @@
 export const validateRequest = (req, res, next) => {
-  // Skip validation for file uploads
+
   if (req.path === '/api/v1/documents/upload') {
     return next();
   }

@@ -1,17 +1,14 @@
 import { PDFDocument, rgb } from 'pdf-lib';
 
-export const generateSignedPDF = async (originalPdfBuffer, fields, signatureBase64, signerEmail) => {
+export const generateSignedPDF = async (originalPdfBuffer, fields, signatureBase64, signerEmail, pdfDisplayWidth = 615) => {
   try {
-    // Load the original PDF
     const pdfDoc = await PDFDocument.load(originalPdfBuffer);
     const pages = pdfDoc.getPages();
     const firstPage = pages[0];
-    const { width, height } = firstPage.getSize();
+    const { width: pdfWidth, height: pdfHeight } = firstPage.getSize();
 
-    console.log('PDF page size:', { width, height });
-    console.log('Fields to add:', JSON.stringify(fields, null, 2));
+    const scale = pdfWidth / (pdfDisplayWidth || 615);
 
-    // Add signature image if provided
     if (signatureBase64) {
       try {
         const imageBytes = Buffer.from(signatureBase64.split(',')[1] || signatureBase64, 'base64');
@@ -23,32 +20,20 @@ export const generateSignedPDF = async (originalPdfBuffer, fields, signatureBase
           try {
             signatureImage = await pdfDoc.embedJpg(imageBytes);
           } catch {
-            console.warn('Could not embed signature image');
             signatureImage = null;
           }
         }
 
         if (signatureImage) {
-          // Find signature field and place image
           const signatureField = fields.find(f => f.type === 'signature');
           if (signatureField) {
             const { x, y, width: w, height: h } = signatureField.coordinates;
-            console.log('Signature field coordinates:', { x, y, w, h });
-            console.log('Placing signature at:', { 
-              x: x, 
-              y: height - y - h, 
-              width: w, 
-              height: h 
-            });
-            
             firstPage.drawImage(signatureImage, {
-              x: x,
-              y: height - y - h, // PDF coordinates are from bottom
-              width: w,
-              height: h,
+              x: x * scale,
+              y: pdfHeight - (y * scale) - (h * scale),
+              width: w * scale,
+              height: h * scale,
             });
-          } else {
-            console.warn('No signature field found in fields array');
           }
         }
       } catch (imgError) {
@@ -56,46 +41,46 @@ export const generateSignedPDF = async (originalPdfBuffer, fields, signatureBase
       }
     }
 
-    // Add text annotations for other fields
     fields.forEach((field) => {
+      const { x, y, width: w, height: h } = field.coordinates;
+      const scaledX = x * scale;
+      const scaledY = pdfHeight - (y * scale) - (h * scale);
+      const scaledW = w * scale;
+      const scaledH = h * scale;
+      
       if (field.type === 'text') {
-        const { x, y, width: w, height: h } = field.coordinates;
         firstPage.drawText('[' + field.id + ']', {
-          x: x,
-          y: height - y - h,
+          x: scaledX,
+          y: scaledY,
           size: 10,
           color: rgb(0, 0, 0),
         });
       } else if (field.type === 'signature' && !signatureBase64) {
-        // Draw placeholder if no signature image
-        const { x, y, width: w, height: h } = field.coordinates;
         firstPage.drawRectangle({
-          x: x,
-          y: height - y - h,
-          width: w,
-          height: h,
+          x: scaledX,
+          y: scaledY,
+          width: scaledW,
+          height: scaledH,
           borderColor: rgb(0, 0, 0),
           borderWidth: 1,
         });
         firstPage.drawText('Signature', {
-          x: x + 5,
-          y: height - y - h + h / 2,
+          x: scaledX + 5,
+          y: scaledY + scaledH / 2,
           size: 8,
           color: rgb(0, 0, 0),
         });
       } else if (field.type === 'date') {
-        const { x, y, width: w, height: h } = field.coordinates;
         const today = new Date().toLocaleDateString();
         firstPage.drawText(today, {
-          x: x,
-          y: height - y - h,
+          x: scaledX,
+          y: scaledY,
           size: 10,
           color: rgb(0, 0, 0),
         });
       }
     });
 
-    // Add signer info at bottom
     firstPage.drawText(`Signed by: ${signerEmail}`, {
       x: 50,
       y: 30,

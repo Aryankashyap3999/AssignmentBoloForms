@@ -3,10 +3,12 @@
   border: 2px solid #ddd;
   background: white;
   cursor: move;
-  transition: border-color 0.2s;
+  transition: none;
   user-select: none;
   padding: 8px;
   box-sizing: border-box;
+  pointer-events: auto;
+  z-index: 100;
 }
 
 .field-box:hover {
@@ -16,6 +18,12 @@
 .field-box.selected {
   border-color: #007bff;
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+}
+
+.field-box.dragging {
+  opacity: 0.7;
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
 }
 
 .field-box-resize {

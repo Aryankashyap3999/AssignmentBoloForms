@@ -9,7 +9,7 @@ import { RadioField } from '../molecules/RadioField';
 import { useEditorStore } from '../../store/editorStore';
 import './PDFEditor.css';
 
-// Set up PDF.js worker
+
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 export const PDFEditor = ({ pdfUrl, fields, onFieldUpdate }) => {
@@ -32,6 +32,10 @@ export const PDFEditor = ({ pdfUrl, fields, onFieldUpdate }) => {
     const newX = e.clientX - rect.left - field.width / 2;
     const newY = e.clientY - rect.top - field.height / 2;
 
+    updateField(fieldId, { x: Math.max(0, newX), y: Math.max(0, newY) });
+  };
+
+  const handleDragMove = (newX, newY, fieldId) => {
     updateField(fieldId, { x: Math.max(0, newX), y: Math.max(0, newY) });
   };
 
@@ -61,7 +65,7 @@ export const PDFEditor = ({ pdfUrl, fields, onFieldUpdate }) => {
       field,
       isSelected: selectedField === field.id,
       onSelect: setSelectedField,
-      onDragStart: () => {},
+      onDragMove: handleDragMove,
       onResize: (e) => handleResize(e, field.id),
     };
 
@@ -84,7 +88,10 @@ export const PDFEditor = ({ pdfUrl, fields, onFieldUpdate }) => {
   }
 
   return (
-    <div className="pdf-editor" ref={containerRef}>
+    <div 
+      className="pdf-editor" 
+      ref={containerRef}
+    >
       <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
         {Array.from({ length: numPages || 1 }, (_, i) => (
           <div key={i + 1} className="pdf-page">

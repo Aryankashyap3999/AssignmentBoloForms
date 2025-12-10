@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { FileUpload } from '../components/molecules/FileUpload';
 import { PDFEditor } from '../components/organisms/PDFEditor';
 import { FieldToolbar } from '../components/organisms/FieldToolbar';
@@ -11,6 +11,7 @@ import './EditorPage.css';
 export const EditorPage = () => {
   const [pdfUrl, setPdfUrl] = useState(null);
   const [signedPdfUrl, setSignedPdfUrl] = useState(null);
+  const pdfEditorRef = useRef(null);
   const uploadMutation = useUploadDocument();
   const signMutation = useSignDocument();
   const fields = useEditorStore((state) => state.fields);
@@ -37,11 +38,20 @@ export const EditorPage = () => {
     }
 
     try {
+      let pdfDisplayWidth = 615;
+      if (pdfEditorRef.current) {
+        const pdfPage = pdfEditorRef.current.querySelector('.pdf-page');
+        if (pdfPage) {
+          pdfDisplayWidth = pdfPage.offsetWidth;
+        }
+      }
+
       const payload = {
         originalDocumentId: documentId,
         signerEmail: signData.email,
         signatureBase64: signData.signatureBase64,
         signedPdfUrl: pdfUrl,
+        pdfDisplayWidth: pdfDisplayWidth,
         signerIpAddress: window.location.hostname,
         signerDeviceInfo: navigator.userAgent,
         fields: fields.map((f) => ({
@@ -61,11 +71,8 @@ export const EditorPage = () => {
       setSignedPdfUrl(signedUrl);
       
       alert('Document signed successfully!');
-      console.log('Signed document:', result.data);
-      console.log('Signed PDF URL:', signedUrl);
     } catch (error) {
       alert('Error signing document: ' + error.message);
-      console.error('Signing error:', error);
     }
   };
 
@@ -109,7 +116,9 @@ export const EditorPage = () => {
         </aside>
 
         <main className="editor-main">
-          <PDFEditor pdfUrl={pdfUrl} fields={fields} />
+          <div ref={pdfEditorRef}>
+            <PDFEditor pdfUrl={pdfUrl} fields={fields} />
+          </div>
         </main>
       </div>
     </div>
