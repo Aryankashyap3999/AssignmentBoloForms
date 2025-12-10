@@ -4,6 +4,7 @@ const documentSchema = new mongoose.Schema(
   {
     fileName: String,
     pdfUrl: String,
+    pdfBuffer: Buffer,
     originalHash: String,      
     pdfWidth: Number,            
     pdfHeight: Number,           

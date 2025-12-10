@@ -6,7 +6,8 @@ export const createDocument = async (documentData, pdfBuffer) => {
   
   const document = await documentRepository.create({
     ...documentData,
-    originalHash: pdfHash
+    originalHash: pdfHash,
+    pdfBuffer: pdfBuffer
   });
   
   return document;
