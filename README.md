@@ -55,6 +55,3 @@ npm run dev
 
 4. **Access Application**
 - Open http://localhost:5173 in your browser
-
-
-*
