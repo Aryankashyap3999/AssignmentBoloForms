@@ -1,0 +1,26 @@
+.field-toolbar {
+  padding: 16px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 16px;
+}
+
+.toolbar-group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.toolbar-title {
+  font-weight: 600;
+  color: #333;
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .toolbar-group {
+    justify-content: center;
+  }
+}

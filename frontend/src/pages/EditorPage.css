@@ -1,0 +1,60 @@
+.editor-page {
+  min-height: 100vh;
+  background: white;
+}
+
+.editor-header {
+  padding: 20px;
+  background: #f9f9f9;
+  border-bottom: 1px solid #ddd;
+}
+
+.editor-header h1 {
+  margin: 0;
+  font-size: 28px;
+  color: #333;
+}
+
+.editor-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.editor-sidebar {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.editor-main {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .editor-container {
+    flex-direction: column;
+  }
+
+  .editor-sidebar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .editor-container {
+    padding: 10px;
+  }
+
+  .editor-header {
+    padding: 10px;
+  }
+
+  .editor-header h1 {
+    font-size: 20px;
+  }
+}

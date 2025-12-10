@@ -1,0 +1,12 @@
+.file-upload {
+  position: relative;
+  display: inline-block;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-label {
+  cursor: pointer;
+}
